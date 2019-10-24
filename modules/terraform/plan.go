@@ -17,28 +17,28 @@ func InitAndPlan(t *testing.T, options *Options) string {
 
 // InitAndPlanE runs terraform init and plan with the given options and returns stdout/stderr from the plan command.
 func InitAndPlanE(t *testing.T, options *Options) (string, error) {
-	if _, err := InitE(t, options); err != nil {
+	if _, err := InitE(options); err != nil {
 		return "", err
 	}
 
-	if _, err := GetE(t, options); err != nil {
+	if _, err := GetE(options); err != nil {
 		return "", err
 	}
 
-	return PlanE(t, options)
+	return PlanE(options)
 }
 
 // Plan runs terraform plan with the given options and returns stdout/stderr.
 // This will fail the test if there is an error in the command.
 func Plan(t *testing.T, options *Options) string {
-	out, err := PlanE(t, options)
+	out, err := PlanE(options)
 	require.NoError(t, err)
 	return out
 }
 
 // PlanE runs terraform plan with the given options and returns stdout/stderr.
-func PlanE(t *testing.T, options *Options) (string, error) {
-	return RunTerraformCommandE(t, options, FormatArgs(options, "plan", "-input=false", "-lock=false")...)
+func PlanE(options *Options) (string, error) {
+	return RunTerraformCommandE(options, FormatArgs(options, "plan", "-input=false", "-lock=false")...)
 }
 
 // InitAndPlanWithExitCode runs terraform init and plan with the given options and returns exitcode for the plan command.
@@ -51,7 +51,7 @@ func InitAndPlanWithExitCode(t *testing.T, options *Options) int {
 
 // InitAndPlanWithExitCodeE runs terraform init and plan with the given options and returns exitcode for the plan command.
 func InitAndPlanWithExitCodeE(t *testing.T, options *Options) (int, error) {
-	if _, err := InitE(t, options); err != nil {
+	if _, err := InitE(options); err != nil {
 		return DefaultErrorExitCode, err
 	}
 

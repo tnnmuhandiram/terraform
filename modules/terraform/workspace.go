@@ -22,21 +22,21 @@ func WorkspaceSelectOrNew(t *testing.T, options *Options, name string) string {
 // and returns a name of the current workspace. It tries to select a workspace with the given
 // name, or it creates a new one if it doesn't exist.
 func WorkspaceSelectOrNewE(t *testing.T, options *Options, name string) (string, error) {
-	out, err := RunTerraformCommandE(t, options, "workspace", "list")
+	out, err := RunTerraformCommandE(options, "workspace", "list")
 	if err != nil {
 		return "", err
 	}
 
 	if isExistingWorkspace(out, name) {
-		_, err = RunTerraformCommandE(t, options, "workspace", "select", name)
+		_, err = RunTerraformCommandE(options, "workspace", "select", name)
 	} else {
-		_, err = RunTerraformCommandE(t, options, "workspace", "new", name)
+		_, err = RunTerraformCommandE(options, "workspace", "new", name)
 	}
 	if err != nil {
 		return "", err
 	}
 
-	return RunTerraformCommandE(t, options, "workspace", "show")
+	return RunTerraformCommandE(options, "workspace", "show")
 }
 
 func isExistingWorkspace(out string, name string) bool {

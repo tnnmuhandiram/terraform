@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/gruntwork-io/terratest/modules/collections"
-	"github.com/gruntwork-io/terratest/modules/logger"
-	"github.com/gruntwork-io/terratest/modules/retry"
-	"github.com/gruntwork-io/terratest/modules/shell"
+	"github.com/tnnmuhandiram/terraform/modules/collections"
+	"github.com/tnnmuhandiram/terraform/modules/logger"
+	"github.com/tnnmuhandiram/terraform/modules/retry"
+	"github.com/tnnmuhandiram/terraform/modules/shell"
 )
 
 // GetCommonOptions extracts commons terraform options
@@ -37,7 +37,7 @@ func GetCommonOptions(options *Options, args ...string) (*Options, []string) {
 
 // RunTerraformCommand runs terraform with the given arguments and options and return stdout/stderr.
 func RunTerraformCommand(t *testing.T, additionalOptions *Options, args ...string) string {
-	out, err := RunTerraformCommandE(t, additionalOptions, args...)
+	out, err := RunTerraformCommandE(additionalOptions, args...)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -102,7 +102,7 @@ func GetExitCodeForTerraformCommandE(t *testing.T, additionalOptions *Options, a
 		OutputMaxLineSize: options.OutputMaxLineSize,
 	}
 
-	_, err := shell.RunCommandAndGetOutputE(t, cmd)
+	_, err := shell.RunCommandAndGetOutputE(cmd)
 	if err == nil {
 		return DefaultSuccessExitCode, nil
 	}

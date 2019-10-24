@@ -9,7 +9,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/gruntwork-io/terratest/modules/logger"
+	"github.com/tnnmuhandiram/terraform/modules/logger"
 	"golang.org/x/net/context"
 )
 

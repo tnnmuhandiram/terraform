@@ -3,9 +3,8 @@ package main
 import (
 	"fmt"
 	"strings"
-	"testing"
 
-	"github.com/gruntwork-io/terratest/modules/terraform"
+	"github.com/tnnmuhandiram/terraform/modules/terraform"
 	test_structure "github.com/tnnmuhandiram/terraform/modules/test-structure"
 
 	"github.com/tnnmuhandiram/terraform/modules/random"
@@ -16,7 +15,6 @@ func main() {
 }
 
 func TestTerraformGcpExample() {
-	fmt.Printf("=========================${t}")
 	// t.Parallel()
 
 	exampleDir := test_structure.CopyTerraformFolderToTemp("./", "examples/terraform-gcp-example")
@@ -45,13 +43,14 @@ func TestTerraformGcpExample() {
 			"bucket_name":    expectedBucketName,
 		},
 	}
-	t := *testing.T
+	// t := *testing.T
 	// At the end of the test, run `terraform destroy` to clean up any resources that were created
-	// defer terraform.Destroy(t, terraformOptions)
+	defer terraform.Destroy(terraformOptions)
 
 	// // This will run `terraform init` and `terraform apply` and fail the test if there are any errors
-	terraform.InitAndApply(t, terraformOptions)
-
+	// out := terraform.InitAndApply(terraformOptions)
+	// fmt.Print(terraformOptions)
+	// fmt.Print(out)
 	// // Run `terraform output` to get the value of some of the output variables
 	// bucketURL := terraform.Output(t, terraformOptions, "bucket_url")
 	// instanceName := terraform.Output(t, terraformOptions, "instance_id")

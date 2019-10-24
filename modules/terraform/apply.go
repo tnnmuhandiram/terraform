@@ -10,8 +10,13 @@ import (
 // method does NOT call destroy and assumes the caller is responsible for cleaning up any resources created by running
 // apply.
 func InitAndApply(options *Options) string {
+	print("========================")
+	print(&options)
+	print("========================")
+
 	out, err := InitAndApplyE(options)
-	// require.NoError(err)
+
+	print(err)
 	return out
 }
 
@@ -23,9 +28,9 @@ func InitAndApplyE(options *Options) (string, error) {
 		return "", err
 	}
 
-	// if _, err := GetE(options); err != nil {
-	// 	return "", err
-	// }
+	if _, err := GetE(options); err != nil {
+		return "", err
+	}
 
 	return ApplyE(options)
 }

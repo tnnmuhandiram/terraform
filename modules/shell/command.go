@@ -13,8 +13,6 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/require"
-
-	"github.com/gruntwork-io/terratest/modules/logger"
 )
 
 // Command is a simpler struct for defining commands than Go's built-in Cmd.
@@ -36,14 +34,14 @@ func RunCommand(t *testing.T, command Command) {
 
 // RunCommandE runs a shell command and redirects its stdout and stderr to the stdout of the atomic script itself.
 func RunCommandE(t *testing.T, command Command) error {
-	_, err := RunCommandAndGetOutputE(t, command)
+	_, err := RunCommandAndGetOutputE(command)
 	return err
 }
 
 // RunCommandAndGetOutput runs a shell command and returns its stdout and stderr as a string. The stdout and stderr of that command will also
 // be printed to the stdout and stderr of this Go program to make debugging easier.
 func RunCommandAndGetOutput(t *testing.T, command Command) string {
-	out, err := RunCommandAndGetOutputE(t, command)
+	out, err := RunCommandAndGetOutputE(command)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -52,7 +50,7 @@ func RunCommandAndGetOutput(t *testing.T, command Command) string {
 
 // RunCommandAndGetOutputE runs a shell command and returns its stdout and stderr as a string. The stdout and stderr of that command will also
 // be printed to the stdout and stderr of this Go program to make debugging easier.
-func RunCommandAndGetOutputE(t *testing.T, command Command) (string, error) {
+func RunCommandAndGetOutputE(command Command) (string, error) {
 	allOutput := []string{}
 	err := runCommandAndStoreOutputE(command, &allOutput, &allOutput)
 
@@ -91,24 +89,24 @@ func runCommandAndStoreOutputE(command Command, storedStdout *[]string, storedSt
 	cmd.Stdin = os.Stdin
 	cmd.Env = formatEnvVars(command)
 
-	// stdout, err := cmd.StdoutPipe()
-	// if err != nil {
-	// 	return err
-	// }
+	stdout, err := cmd.StdoutPipe()
+	if err != nil {
+		return err
+	}
 
-	// stderr, err := cmd.StderrPipe()
-	// if err != nil {
-	// 	return err
-	// }
+	stderr, err := cmd.StderrPipe()
+	if err != nil {
+		return err
+	}
 
-	// err = cmd.Start()
-	// if err != nil {
-	// 	return err
-	// }
+	err = cmd.Start()
+	if err != nil {
+		return err
+	}
 
-	// if err := readStdoutAndStderr(stdout, stderr, storedStdout, storedStderr, command.OutputMaxLineSize); err != nil {
-	// 	return err
-	// }
+	if err := readStdoutAndStderr(stdout, stderr, storedStdout, storedStderr, command.OutputMaxLineSize); err != nil {
+		return err
+	}
 
 	if err := cmd.Wait(); err != nil {
 		return err
@@ -119,7 +117,7 @@ func runCommandAndStoreOutputE(command Command, storedStdout *[]string, storedSt
 
 // This function captures stdout and stderr into the given variables while still printing it to the stdout and stderr
 // of this Go program
-func readStdoutAndStderr(t *testing.T, stdout io.ReadCloser, stderr io.ReadCloser, storedStdout *[]string, storedStderr *[]string, maxLineSize int) error {
+func readStdoutAndStderr(stdout io.ReadCloser, stderr io.ReadCloser, storedStdout *[]string, storedStderr *[]string, maxLineSize int) error {
 	stdoutScanner := bufio.NewScanner(stdout)
 	stderrScanner := bufio.NewScanner(stderr)
 
@@ -131,8 +129,8 @@ func readStdoutAndStderr(t *testing.T, stdout io.ReadCloser, stderr io.ReadClose
 	wg := &sync.WaitGroup{}
 	mutex := &sync.Mutex{}
 	wg.Add(2)
-	go readData(t, stdoutScanner, wg, mutex, storedStdout)
-	go readData(t, stderrScanner, wg, mutex, storedStderr)
+	go readData(stdoutScanner, wg, mutex, storedStdout)
+	go readData(stderrScanner, wg, mutex, storedStderr)
 	wg.Wait()
 
 	if err := stdoutScanner.Err(); err != nil {
@@ -146,16 +144,16 @@ func readStdoutAndStderr(t *testing.T, stdout io.ReadCloser, stderr io.ReadClose
 	return nil
 }
 
-func readData(t *testing.T, scanner *bufio.Scanner, wg *sync.WaitGroup, mutex *sync.Mutex, allOutput *[]string) {
+func readData(scanner *bufio.Scanner, wg *sync.WaitGroup, mutex *sync.Mutex, allOutput *[]string) {
 	defer wg.Done()
 	for scanner.Scan() {
-		logTextAndAppendToOutput(t, mutex, scanner.Text(), allOutput)
+		logTextAndAppendToOutput(mutex, scanner.Text(), allOutput)
 	}
 }
 
-func logTextAndAppendToOutput(t *testing.T, mutex *sync.Mutex, text string, allOutput *[]string) {
+func logTextAndAppendToOutput(mutex *sync.Mutex, text string, allOutput *[]string) {
 	defer mutex.Unlock()
-	logger.Log(t, text)
+	// logger.Log(t, text)
 	mutex.Lock()
 	*allOutput = append(*allOutput, text)
 }
