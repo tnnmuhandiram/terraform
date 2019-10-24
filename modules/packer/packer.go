@@ -96,8 +96,8 @@ func BuildArtifactE(t *testing.T, options *Options) (string, error) {
 	}
 
 	description := fmt.Sprintf("%s %v", cmd.Command, cmd.Args)
-	output, err := retry.DoWithRetryableErrorsE(t, description, options.RetryableErrors, options.MaxRetries, options.TimeBetweenRetries, func() (string, error) {
-		return shell.RunCommandAndGetOutputE(t, cmd)
+	output, err := retry.DoWithRetryableErrorsE(description, options.RetryableErrors, options.MaxRetries, options.TimeBetweenRetries, func() (string, error) {
+		return shell.RunCommandAndGetOutputE(cmd)
 	})
 
 	if err != nil {

@@ -244,7 +244,7 @@ func TestDoWithRetryableErrors(t *testing.T) {
 		t.Run(testCase.description, func(t *testing.T) {
 			t.Parallel()
 
-			actualOutput, err := DoWithRetryableErrorsE(t, testCase.description, testCase.retryableErrors, testCase.maxRetries, 1*time.Millisecond, testCase.action)
+			actualOutput, err := DoWithRetryableErrorsE(testCase.description, testCase.retryableErrors, testCase.maxRetries, 1*time.Millisecond, testCase.action)
 			assert.Equal(t, expectedOutput, actualOutput)
 			if testCase.expectedError != nil {
 				assert.Equal(t, testCase.expectedError, err)

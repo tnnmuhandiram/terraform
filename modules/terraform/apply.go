@@ -9,31 +9,31 @@ import (
 // InitAndApply runs terraform init and apply with the given options and return stdout/stderr from the apply command. Note that this
 // method does NOT call destroy and assumes the caller is responsible for cleaning up any resources created by running
 // apply.
-func InitAndApply(t *testing.T, options *Options) string {
-	out, err := InitAndApplyE(t, options)
-	require.NoError(t, err)
+func InitAndApply(options *Options) string {
+	out, err := InitAndApplyE(options)
+	// require.NoError(err)
 	return out
 }
 
 // InitAndApplyE runs terraform init and apply with the given options and return stdout/stderr from the apply command. Note that this
 // method does NOT call destroy and assumes the caller is responsible for cleaning up any resources created by running
 // apply.
-func InitAndApplyE(t *testing.T, options *Options) (string, error) {
-	if _, err := InitE(t, options); err != nil {
+func InitAndApplyE(options *Options) (string, error) {
+	if _, err := InitE(options); err != nil {
 		return "", err
 	}
 
-	if _, err := GetE(t, options); err != nil {
-		return "", err
-	}
+	// if _, err := GetE(options); err != nil {
+	// 	return "", err
+	// }
 
-	return ApplyE(t, options)
+	return ApplyE(options)
 }
 
 // Apply runs terraform apply with the given options and return stdout/stderr. Note that this method does NOT call destroy and
 // assumes the caller is responsible for cleaning up any resources created by running apply.
 func Apply(t *testing.T, options *Options) string {
-	out, err := ApplyE(t, options)
+	out, err := ApplyE(options)
 	require.NoError(t, err)
 	return out
 }
@@ -48,8 +48,8 @@ func TgApplyAll(t *testing.T, options *Options) string {
 
 // ApplyE runs terraform apply with the given options and return stdout/stderr. Note that this method does NOT call destroy and
 // assumes the caller is responsible for cleaning up any resources created by running apply.
-func ApplyE(t *testing.T, options *Options) (string, error) {
-	return RunTerraformCommandE(t, options, FormatArgs(options, "apply", "-input=false", "-lock=false", "-auto-approve")...)
+func ApplyE(options *Options) (string, error) {
+	return RunTerraformCommandE(options, FormatArgs(options, "apply", "-input=false", "-lock=false", "-auto-approve")...)
 }
 
 // TgApplyAllE runs terragrunt apply-all with the given options and return stdout/stderr. Note that this method does NOT call destroy and
@@ -59,5 +59,5 @@ func TgApplyAllE(t *testing.T, options *Options) (string, error) {
 		return "", TgInvalidBinary(options.TerraformBinary)
 	}
 
-	return RunTerraformCommandE(t, options, FormatArgs(options, "apply-all", "-input=false", "-lock=false", "-auto-approve")...)
+	return RunTerraformCommandE(options, FormatArgs(options, "apply-all", "-input=false", "-lock=false", "-auto-approve")...)
 }

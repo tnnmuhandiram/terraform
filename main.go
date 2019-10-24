@@ -5,11 +5,10 @@ import (
 	"strings"
 	"testing"
 
-	test_structure "./modules/test-structure"
-
-	"github.com/gruntwork-io/terratest/modules/gcp"
-	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
+	test_structure "github.com/tnnmuhandiram/terraform/modules/test-structure"
+
+	"github.com/tnnmuhandiram/terraform/modules/random"
 )
 
 func main() {
@@ -18,12 +17,12 @@ func main() {
 
 func TestTerraformGcpExample() {
 	fmt.Printf("=========================${t}")
-	t.Parallel()
+	// t.Parallel()
 
 	exampleDir := test_structure.CopyTerraformFolderToTemp("./", "examples/terraform-gcp-example")
 
 	// Get the Project Id to use
-	projectId := gcp.GetGoogleProjectIDFromEnvVar(t)
+	projectId := "postgress-cluster"
 
 	// Create all resources in the following zone
 	zone := "us-east1-b"
@@ -46,12 +45,12 @@ func TestTerraformGcpExample() {
 			"bucket_name":    expectedBucketName,
 		},
 	}
-
+	t := *testing.T
 	// At the end of the test, run `terraform destroy` to clean up any resources that were created
 	// defer terraform.Destroy(t, terraformOptions)
 
 	// // This will run `terraform init` and `terraform apply` and fail the test if there are any errors
-	// terraform.InitAndApply(t, terraformOptions)
+	terraform.InitAndApply(t, terraformOptions)
 
 	// // Run `terraform output` to get the value of some of the output variables
 	// bucketURL := terraform.Output(t, terraformOptions, "bucket_url")

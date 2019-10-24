@@ -45,7 +45,7 @@ func RunTerraformCommand(t *testing.T, additionalOptions *Options, args ...strin
 }
 
 // RunTerraformCommandE runs terraform with the given arguments and options and return stdout/stderr.
-func RunTerraformCommandE(t *testing.T, additionalOptions *Options, additionalArgs ...string) (string, error) {
+func RunTerraformCommandE(additionalOptions *Options, additionalArgs ...string) (string, error) {
 	options, args := GetCommonOptions(additionalOptions, additionalArgs...)
 
 	cmd := shell.Command{
@@ -57,8 +57,8 @@ func RunTerraformCommandE(t *testing.T, additionalOptions *Options, additionalAr
 	}
 
 	description := fmt.Sprintf("%s %v", options.TerraformBinary, args)
-	return retry.DoWithRetryableErrorsE(t, description, options.RetryableTerraformErrors, options.MaxRetries, options.TimeBetweenRetries, func() (string, error) {
-		return shell.RunCommandAndGetOutputE(t, cmd)
+	return retry.DoWithRetryableErrorsE(description, options.RetryableTerraformErrors, options.MaxRetries, options.TimeBetweenRetries, func() (string, error) {
+		return shell.RunCommandAndGetOutputE(cmd)
 	})
 }
 
@@ -75,8 +75,8 @@ func RunTerraformCommandAndGetStdoutE(t *testing.T, additionalOptions *Options, 
 	}
 
 	description := fmt.Sprintf("%s %v", options.TerraformBinary, args)
-	return retry.DoWithRetryableErrorsE(t, description, options.RetryableTerraformErrors, options.MaxRetries, options.TimeBetweenRetries, func() (string, error) {
-		return shell.RunCommandAndGetStdOutE(t, cmd)
+	return retry.DoWithRetryableErrorsE(description, options.RetryableTerraformErrors, options.MaxRetries, options.TimeBetweenRetries, func() (string, error) {
+		return shell.RunCommandAndGetStdOutE(cmd)
 	})
 }
 

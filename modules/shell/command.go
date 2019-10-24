@@ -54,7 +54,7 @@ func RunCommandAndGetOutput(t *testing.T, command Command) string {
 // be printed to the stdout and stderr of this Go program to make debugging easier.
 func RunCommandAndGetOutputE(t *testing.T, command Command) (string, error) {
 	allOutput := []string{}
-	err := runCommandAndStoreOutputE(t, command, &allOutput, &allOutput)
+	err := runCommandAndStoreOutputE(command, &allOutput, &allOutput)
 
 	output := strings.Join(allOutput, "\n")
 	return output, err
@@ -64,17 +64,17 @@ func RunCommandAndGetOutputE(t *testing.T, command Command) (string, error) {
 // and stderr of that command will also be printed to the stdout and stderr of this Go program to make debugging easier.
 // If there are any errors, fail the test.
 func RunCommandAndGetStdOut(t *testing.T, command Command) string {
-	output, err := RunCommandAndGetStdOutE(t, command)
+	output, err := RunCommandAndGetStdOutE(command)
 	require.NoError(t, err)
 	return output
 }
 
 // RunCommandAndGetStdOutE runs a shell command and returns solely its stdout (but not stderr) as a string. The stdout
 // and stderr of that command will also be printed to the stdout and stderr of this Go program to make debugging easier.
-func RunCommandAndGetStdOutE(t *testing.T, command Command) (string, error) {
+func RunCommandAndGetStdOutE(command Command) (string, error) {
 	stdout := []string{}
 	stderr := []string{}
-	err := runCommandAndStoreOutputE(t, command, &stdout, &stderr)
+	err := runCommandAndStoreOutputE(command, &stdout, &stderr)
 
 	output := strings.Join(stdout, "\n")
 	return output, err
@@ -83,32 +83,32 @@ func RunCommandAndGetStdOutE(t *testing.T, command Command) (string, error) {
 // runCommandAndStoreOutputE runs a shell command and stores each line from stdout and stderr in the given
 // storedStdout and storedStderr variables, respectively. The stdout and stderr of that command will also
 // be printed to the stdout and stderr of this Go program to make debugging easier.
-func runCommandAndStoreOutputE(t *testing.T, command Command, storedStdout *[]string, storedStderr *[]string) error {
-	logger.Logf(t, "Running command %s with args %s", command.Command, command.Args)
+func runCommandAndStoreOutputE(command Command, storedStdout *[]string, storedStderr *[]string) error {
+	// logger.Logf(t, "Running command %s with args %s", command.Command, command.Args)
 
 	cmd := exec.Command(command.Command, command.Args...)
 	cmd.Dir = command.WorkingDir
 	cmd.Stdin = os.Stdin
 	cmd.Env = formatEnvVars(command)
 
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		return err
-	}
+	// stdout, err := cmd.StdoutPipe()
+	// if err != nil {
+	// 	return err
+	// }
 
-	stderr, err := cmd.StderrPipe()
-	if err != nil {
-		return err
-	}
+	// stderr, err := cmd.StderrPipe()
+	// if err != nil {
+	// 	return err
+	// }
 
-	err = cmd.Start()
-	if err != nil {
-		return err
-	}
+	// err = cmd.Start()
+	// if err != nil {
+	// 	return err
+	// }
 
-	if err := readStdoutAndStderr(t, stdout, stderr, storedStdout, storedStderr, command.OutputMaxLineSize); err != nil {
-		return err
-	}
+	// if err := readStdoutAndStderr(stdout, stderr, storedStdout, storedStderr, command.OutputMaxLineSize); err != nil {
+	// 	return err
+	// }
 
 	if err := cmd.Wait(); err != nil {
 		return err
